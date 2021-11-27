@@ -118,9 +118,7 @@ async def on_message(message):
         await send(f"You currently hold {held}")
         
                 
-    elif msg.startswith("$deposit"):
-        
-        await send(f'Success! Your new balance is: {deposit(userID, float(qty))}')
+    
     
     
     #else:

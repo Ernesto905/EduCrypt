@@ -1,2 +1,2 @@
 # EduCrypt
-Initial Commit for EduCrypt, a web/discord blend educational project for NextStepHacks 2021
+Educrypt, Is a hybrid learning platform, which uses discord + web to deliver awesome courses regarding, Crypto, Blockchain, NFTs etc...

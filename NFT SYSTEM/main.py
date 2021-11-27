@@ -5,6 +5,21 @@ from dotenv import load_dotenv
 from os.path import join, dirname
 import json
 import time
+from pycoingecko import CoinGeckoAPI
+cg = CoinGeckoAPI()
+def retAllCrypto():
+    data = cg.get_coins_list()
+    
+    ls = []
+    for i in data:
+        ls.append(i['id'])
+    
+    return ls
+def verifyCrypto(crypto):
+    if crypto in retAllCrypto(): 
+        return True
+    else: 
+        return False
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -33,21 +48,24 @@ async def sell(ctx, *, args):
     await client.wait_until_ready()
     guild = ctx.guild
     arguments = args.split()
-    channelName = f'{arguments[0]}-NFT'
-    category = discord.utils.get(ctx.guild.categories, name="nft-trading")
-    await guild.create_text_channel(channelName, category=category)
-    channel = discord.utils.get(ctx.guild.channels, name=channelName.lower())
-    channel_id = channel.id
-    msg_channel = client.get_channel(int(channel_id))
-    
-    await ctx.send(f"Now You @everyone can buy this nft at #{channelName.lower()}")
-    await msg_channel.send(f"{ctx.author} has offered {arguments[0]} at the price of {arguments[2]} {arguments[3]}.\n File URL: {arguments[1]}")
+    if verifyCrypto(arguments[3]):
+        channelName = f'{arguments[0]}-NFT'
+        category = discord.utils.get(ctx.guild.categories, name="nft-trading")
+        await guild.create_text_channel(channelName, category=category)
+        channel = discord.utils.get(ctx.guild.channels, name=channelName.lower())
+        channel_id = channel.id
+        msg_channel = client.get_channel(int(channel_id))
+        
+        await ctx.send(f"Now You @everyone can buy this nft at #{channelName.lower()}")
+        await msg_channel.send(f"{ctx.author} has offered {arguments[0]} at the price of {arguments[2]} {arguments[3]}.\n File URL: {arguments[1]}")
 
-    data = {"user": f"{ctx.author}", "nft-title":arguments[0], "file-url":arguments[1], "price":arguments[2], "ticker":arguments[3]}
+        data = {"user": f"{ctx.author}", "nft-title":arguments[0], "file-url":arguments[1], "price":arguments[2], "ticker":arguments[3]}
 
-    with open(f"NFT SYSTEM/data/{channelName.lower()}-data.json", 'w') as data_json:
-        json.dump(data, data_json)
-    print(f"{ctx.author} has sucessfully sold the nft of {arguments[0]}")
+        with open(f"NFT SYSTEM/data/{channelName.lower()}-data.json", 'w') as data_json:
+            json.dump(data, data_json)
+        print(f"{ctx.author} has sucessfully sold the nft of {arguments[0]}")
+    else: 
+        await ctx.send("Ticker Not Good")
 
 @client.command()
 async def buy(ctx):
@@ -76,7 +94,7 @@ async def buy(ctx):
                     await user.send('Transaction Processed Succesfully')
                 with open (".../TRADING SYSTEM/accounts.json", "r") as account_data:
                     data = json.load(account_data)
-                    data["cryptoheld"][ticker] = 
+                    # data["cryptoheld"][ticker] = 
         # os.remove(f"NFT SYSTEM/data/{channel}-data.json")
         print(member.name)
                 

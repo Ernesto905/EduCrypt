@@ -94,7 +94,7 @@ async def buy(ctx):
                     await user.send('Transaction Processed Succesfully')
                 with open (".../TRADING SYSTEM/accounts.json", "r") as account_data:
                     data = json.load(account_data)
-                    # data["cryptoheld"][ticker] = 
+                    # data[member.name][]
         # os.remove(f"NFT SYSTEM/data/{channel}-data.json")
         print(member.name)
                 

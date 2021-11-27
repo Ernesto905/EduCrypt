@@ -70,35 +70,67 @@ async def sell(ctx, *, args):
 @client.command()
 async def buy(ctx):
     channel = ctx.message.channel
-    try:
-        with open(f"NFT SYSTEM/data/{channel}-data.json", 'r') as data_json:
+    # try:
+    with open(f"NFT SYSTEM/data/{channel}-data.json", 'r') as data_json:
             data = json.load(data_json)
             data_json.close()
         
-        seller = data["user"]
-        title = data["title"]
-        file_url = data["file-url"]
-        price = data["price"]
-        ticker = data["ticker"]
-        buyer = ctx.author
+    seller = data["user"]
+    title = data["nft-title"]
+    file_url = data["file-url"]
+    price = data["price"]
+    ticker = data["ticker"]
+    buyer = ctx.author
 
-        role = discord.utils.find(lambda r: r.name == 'miner', ctx.message.guild.roles)
-        ID = ctx.message.guild.id
-        guild = client.get_guild(ID)
-        memberList = list(guild.members)
-        for member in memberList:
+    role = discord.utils.find(lambda r: r.name == 'miner', ctx.message.guild.roles)
+    ID = ctx.message.guild.id
+    guild = client.get_guild(ID)
+    memberList = list(guild.members)
+    for member in memberList:
                 if role in member.roles:
                     user = client.get_user(member.id)
                     await user.send('Processing Transaction')
                     time.sleep(2)
                     await user.send('Transaction Processed Succesfully')
-                with open (".../TRADING SYSTEM/accounts.json", "r") as account_data:
-                    data = json.load(account_data)
-                    # data[member.name][]
-        # os.remove(f"NFT SYSTEM/data/{channel}-data.json")
-        print(member.name)
+                    # print(member.name+"#"+member.discriminator)
+                # mydict = []
+                # with open ("../../../TRADING SYSTEM/accounts.json", "r") as account_data:
+                #     print(account_data.read())
+                #     for jsonObj in account_data:
+                #         obj = json.loads(jsonObj)
+                #         print(jsonObj)
+                #         mydict.append(obj)
+                    
+                #     print("mydict",mydict)
                 
-    except: 
-        await ctx.send("No, Such NFT exists, or you are messaging, in the wrong channel, please message in a channel under the 'NFT-TRADING' category.")
+                # for diction in mydict:
+                #     for key, value in diction.items():
+                #         for i in value:
+                #             for d in i:
+                #                     print(f"key: {key}, value: {d}")
+                #             if i == "cryptoHeld":
+                #                 for d in i:
+                #                     print(f"key: {key}, value: {d}")
 
-client.run(discordToken)
+                #json_path = join(dirname(), 'accounts.json')
+                #jsonFile = open(json_path)
+                #jsonData = json.load(jsonFile)
+                #jsonFile.close()
+
+               
+                # with open ("../../../TRADING SYSTEM/accounts.json", "r") as account_data:
+                #     mydict = json.load(account_data)
+                #     for key, value in mydict.items():
+                #             for k, v in value.items():
+                #                 if k == "cryptoHeld":
+                #                     d = v["dogecoin"]
+                #                     print(f"{d}")
+                with open("../../../TRADING SYSTEM/accounts.json", "r") as account_data:
+                    obj = json.loads(account_data.read())
+                    print(obj)
+                
+    # except Exception as e: 
+    #     print(e)
+    #     await ctx.send("No, Such NFT exists, or you are messaging, in the wrong channel, please message in a channel under the 'NFT-TRADING' category.")
+
+client.run("OTEyOTU2NTg2MjI4NTg4NTY1.YZ3fFA.SpZ8JyDY1LrXPts_U6dOX2yolac")

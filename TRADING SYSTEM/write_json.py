@@ -109,11 +109,3 @@ def write_to():
     
 
 
-
-
-"""
-Price - mean
-
-mean = SUM OF ALL CRYPTO PRICES / NUMBER OF CRYPTO SOLD
-
-"""

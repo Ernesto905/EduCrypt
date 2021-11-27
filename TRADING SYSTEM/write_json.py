@@ -60,12 +60,19 @@ def makePurchase(user, priceTag, Ticker, amt):
         return True
     else: return False
     
+def verifySale(user, Ticker, amt):
+    for j, k in jsonData[user]["cryptoHeld"][Ticker].items():
+        if k < amt:
+            return False
+        else: return True
+    
 def makeSale(user, priceTag, Ticker, amt):
-    for j,k in jsonData[user]["cryptoHeld"][Ticker].items():
-        totalVal = float(j)
-        totalAmt = k
-        newAmt = k - amt
-        
+    if verifySale(user, Ticker, amt) ==  True: 
+        for j,k in jsonData[user]["cryptoHeld"][Ticker].items():
+            totalVal = float(j)
+            totalAmt = k
+            newAmt = k - amt
+    else: return False
     #magic 
     currentMean = totalVal / totalAmt 
     newEntry = {str(currentMean * newAmt) : newAmt}
@@ -74,6 +81,7 @@ def makeSale(user, priceTag, Ticker, amt):
     jsonData[user]["cryptoHeld"][Ticker] = newEntry
     jsonData[user]['balance'] += priceTag
     
+    write_to()
     return currentMean
 
 

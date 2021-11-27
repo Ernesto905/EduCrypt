@@ -74,8 +74,8 @@ async def on_message(message):
     
     
     if msg == "$help":
-        await send(f"Hello {message.author}, and welcome to trader Bob's trading emporium where we host all your trading needs!")
-        await send("Where we're proud to bring your real time crypto paper trading capabilities thorugh the Use of CoinGecko's API!")
+        await send(f"Hello {message.author}, and welcome to trader Bot's trading emporium where we host all your trading needs!")
+        await send("We're proud to bring your real time crypto paper trading capabilities thorugh the Use of CoinGecko's API!")
         await send("Please use the following format for interacting with me:\nBuy: $Buy [AMOUNT] [TICKER]\nSell: $Sell [AMOUNT] [TICKER]\nView Portfolio: $View\nDeposit Funds: $deposit [AMOUNT]")
     
     elif transaction == True and verifyStructure(purchase, amount, coin) == True:
@@ -94,11 +94,13 @@ async def on_message(message):
                 
         if msg.startswith('$sell'):
             mean = makeSale(userID, price, coin, amount)
-        
-            confirm = "You have sold "+str(amount)+ " " + coin + " at a current market price of " + str(price) + " USD"
-            profits = f"Your profits have been: {price - mean}$" 
-            await send(confirm)
-            await send(profits)
+            if mean == False:
+                await send(f"You do not have the required amount of {coin} to make that transaction")
+            else: 
+                confirm = "You have sold "+str(amount)+ " " + coin + " at a current market price of " + str(price) + " USD"
+                profits = f"Your profits have been: {price - mean}$" 
+                await send(confirm)
+                await send(profits)
             
 
         
@@ -121,8 +123,8 @@ async def on_message(message):
         await send(f'Success! Your new balance is: {deposit(userID, float(qty))}')
     
     
-    else:
-        await send("Please bless me with a valid command or type '$help' for a list of commands")
+    #else:
+        #await send("This bot is not for chatting purposes. Please enter '$help' for a list of commands")
 
 
 

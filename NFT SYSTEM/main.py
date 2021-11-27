@@ -1,4 +1,3 @@
-
 import discord
 from discord.ext import commands
 import os
@@ -6,7 +5,6 @@ from dotenv import load_dotenv
 from os.path import join, dirname
 import json
 import time
-os.
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -28,7 +26,7 @@ async def helpme(ctx):
 
 @client.command()
 async def tickers(ctx):
-    await ctx.send('What are crypto tickers?\n\n A: In essence, a ticker symbol is the short combination of letters that is used to represent an asset, stock, or cryptocurrency token on various exchanges, swapping services, and other DeFi solutions. For example, Bitcoin’s ticker symbol is BTC, while Ethereum’s ticker symbol is ETH. \n\n List of crypto tickers can be found here: https://coinmarketcap.com/all/views/all/  ')
+    await ctx.send('What are crypto tickers?\n\n A: In essence, a ticker symbol is the short combination of letters that is used to represent an asset, stock, or cryptocurrency token on various exchanges, swapping services, and other DeFi solutions. For example, Bitcoin’s ticker symbol is BTC, while Ethereum’s ticker symbol is ETH. \n\n List of crypto tickers can be found here: https://coinmarketcap.com/all/views/all/')
 
 @client.command()
 async def sell(ctx, *, args):
@@ -76,7 +74,11 @@ async def buy(ctx):
                     await user.send('Processing Transaction')
                     time.sleep(2)
                     await user.send('Transaction Processed Succesfully')
-        os.remove(f"NFT SYSTEM/data/{channel}-data.json")
+                with open (".../TRADING SYSTEM/accounts.json", "r") as account_data:
+                    data = json.load(account_data)
+                    data["cryptoheld"][ticker] = 
+        # os.remove(f"NFT SYSTEM/data/{channel}-data.json")
+        print(member.name)
                 
     except: 
         await ctx.send("No, Such NFT exists, or you are messaging, in the wrong channel, please message in a channel under the 'NFT-TRADING' category.")

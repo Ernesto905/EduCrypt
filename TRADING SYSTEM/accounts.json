@@ -1,1 +1,6 @@
-{"Ernesto906#7529": {"balance": 39647.55, "cryptoHeld": {"dogecoin": {"10352.45": 50000.0}}}, "Vaarun Sinha#3367": {"balance": 39647.55, "cryptoHeld": {"dogecoin": {"10352.45": 50000.0}}}}
+{
+  "Ernesto906#7529": {
+    "balance": 39647.55,
+    "cryptoHeld": [{ "dogecoin": { "10352.45": 50000.0 } }]
+  }
+}

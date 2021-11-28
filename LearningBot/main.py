@@ -135,8 +135,12 @@ def makeCurriculum(user):
     name = userInfo["name"]
     timeInterval = userInfo["interval"]
     course = userInfo["course"]
-    if course == "Blockchain" and completed == True: course = "NFT"
-    if course == "NFT" and completed == True: course = "Blockchain"
+    if course == "Blockchain" and completed == True: 
+        print("Changed")
+        course = "NFT"
+    if course == "NFT" and completed == True: 
+        print("changed")
+        course = "Blockchain"
     
     if course == "Blockchain":
         link1 = "https://www.guru99.com/blockchain-tutorial.html#5"
@@ -154,15 +158,6 @@ def makeCurriculum(user):
          
     return correctJsonData, link1, link2, link3, timeInterval
     
-# def create_IMG_Path(courseID):
-#     if courseID == 0:
-#         imagePath = join(dirname(__file__), 'Blockchain.png')
-#     if courseID == 1:
-#         imagePath = join(dirname(__file__), 'NFT.png')
-#     return imagePath   
-
-#image Path
-# imagePath = create_IMG_Path(0)
  
 @client.event   
 async def on_ready():
@@ -280,26 +275,7 @@ async def on_message(message):
         counter = 0
         numCorrect = 0
         await send("Questions Reset! Please input 'Begin!' to get started")
-        
-    if completed == True:
-        currentData, link1, link2, link3, timeInt = makeCurriculum(message.author)
-        time_Interval(timeInt)
-        resetJson(currentData)
-        correct_ans = ''
-        counter += 1
-        
-        await send(f"Congratulations {message.author}, You are now ready for the next step in your learning journey.\nPlease proceed to the following link(s)")
-        if link3 != '':
-            await send(link3)
-        if link2 != '':
-            await send(link2)
-        await send(link1)
-        await send("Estimated time of completion: 45 minutes")
-        
-        time_Interval(timeInt) #Placeholder time interval for now
-        
-        await send("It has been 45 minutes")
-        await send(f'Quiz Time!\n------------\nPlease type your answer in the following example format : ".A"')
+    
 
 #Secret stuff
 dotenv_path = join(dirname(__file__), '.env')

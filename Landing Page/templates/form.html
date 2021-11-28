@@ -21,12 +21,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}">
 </head>
 <body>
-    <section id="choice"{% if((load == "self") or (load == "group")) %} hidden{% endif %}>
-        <h1 class="text-wrap my-4">Join Our Course</h1>
-        <button type="button" class="btn btn-info fs-4 my-2" onclick="choiceA()">Register Yourself</button>
-        <button type="button" class="btn btn-info fs-4 my-2" onclick="choiceB()">Register Group</button>
-    </section>
-    <section id="form"{% if(load == "form") %}{% else %} hidden{% endif %}>
+    <section id="form"{% if(load != "form") %} hidden{% endif %}>
         {% if(errors and (load=="self")) %}
             <div class="alert alert-danger" role="alert" style="position:absolute;overflow-y:scroll;max-height:15vh;width:90vw;top:1vh;z-index:1;">
                 {% for err in errors %}
@@ -69,25 +64,5 @@
             Your account has been registered!!
         </div>
     </section>
-    <script>
-        choice = document.getElementById('choice');
-        formA = document.getElementById('formA');
-        formB = document.getElementById('formB');
-        function choiceA(){
-            choice.hidden = true;
-            formA.hidden = false;
-            formB.hidden = true;
-        }
-        function choiceB(){
-            choice.hidden = true;
-            formA.hidden = true;
-            formB.hidden = false;
-        }
-        function back(){
-            choice.hidden = false;
-            formA.hidden = true;
-            formB.hidden = true;
-        }
-    </script>
 </body>
 </html>

@@ -1,30 +1,45 @@
 import json
+from bson.json_util import dumps
 
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 
-json_path = join(dirname(__file__), 'accounts.json')
+import pymongo
+
+#Database configuration
+conn_str = "mongodb+srv://Ernesto905:mypassword@cluster0.h8feh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+DBclient = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+myDB = DBclient["EducryptDatabase"]["tradingBot"]
+
+fileData = myDB.find({"_id": "accounts"})[0]
+#collection = db.tradingBot
+
+
+
+jsonData = myDB.find({"_id": "accounts"})[0]
+
+#print(jsonData)
+
 
 
 #Initial account state
 exampleUser = {'balance': 50000.00, 'cryptoHeld': {}}
 
-#open load dump ;)
-jsonFile = open(json_path)
-jsonData = json.load(jsonFile)
-jsonFile.close()
+
+
+
 
 
 
 def reLoad():
-    jsonFile = open(json_path)
-    jsonData = json.load(jsonFile)
-    jsonFile.close()
+    pass
 
 def deposit(user, amount):
+    
     print(jsonData[user]['balance'])
     print(type(jsonData[user]['balance']))
+    
     jsonData[user]['balance'] += float(amount)
     return jsonData[user]['balance']
 
@@ -105,9 +120,10 @@ def viewHeld(user):
     return entry
 
 def write_to():
-    jsonFile = open(json_path, "w")
-    json.dump(jsonData, jsonFile)
-    jsonFile.close()
+    
+    #db
+    myDB.replace_one({"_id": "accounts"}, jsonData)
+    
     
 
 

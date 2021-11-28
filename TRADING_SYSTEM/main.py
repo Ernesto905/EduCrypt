@@ -6,8 +6,13 @@ from discord.ext import commands
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+import pymongo
 
-
+#Database configuration
+conn_str = "mongodb+srv://Ernesto905:mypassword@cluster0.h8feh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+DBclient = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+db = DBclient.EducryptDatabase
+collection = db.tradingBot
 
 
 client = discord.Client()  #intialize bot

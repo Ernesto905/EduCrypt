@@ -6,33 +6,51 @@ from os.path import join, dirname
 import json
 import time
 
-#global count used to loop through questions
+
+
+
+import pymongo
+
+#Database configuration
+conn_str = "mongodb+srv://Ernesto905:mypassword@cluster0.h8feh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+DBclient = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+myDB = DBclient["EducryptDatabase"]["learningBot"]
+
+# fileData = myDB.find({"_id": "accounts"})[0]
+#collection = db.tradingBot
+
 
 
 client = discord.Client()
 
-#different json datas
-json_path1 = join(dirname(__file__), 'Test1.json')
-jsonFile1 = open(json_path1)
-jsonData1 = json.load(jsonFile1)
-jsonFile1.close()
+jsonData1 = myDB.find({"_id": "Test1"})[0]
+jsonData2 = myDB.find({"_id": "Test2"})[0]
 
-#different json datas
-json_path2 = join(dirname(__file__), 'Test2.json')
-jsonFile2 = open(json_path2)
-jsonData2 = json.load(jsonFile2)
-jsonFile2.close()
-
+global interval
+global curriculumID
 global counter
 global extra
 global numCorrect
 global correct_ans
+
+"""
+Intervals:
+daily = once every day
+12hrs = every 12 hrs
+weekly = once every week
+weekly2 = twice every week
+
+Course:
+NFT
+Blockchain
+"""
 
 counter = 0
 numCorrect = 0
 
 
 def timeInterval(elapse):
+    
     if elapse == "day": gap = 86400
     if elapse == "45" : gap = 2700
     if elapse == "30" : gap = 1800
@@ -40,39 +58,38 @@ def timeInterval(elapse):
     time.sleep(2)
 
 #function to write into json file
-def write_to(currentData, currentPath):
-    jsonFile = open(currentPath, "w")
-    json.dump(currentData, jsonFile)
-    jsonFile.close()
+
     
 #loop through question list and check if question is Done or not. If done then skip else return it's information in the form of a dictionary
-def get_questionData(currentData, currentPath):
+def get_questionData(currentData):
     
     
     questionOpt = []
     for key, value in currentData.items():
-        for isDone, answer in currentData[key].items():
-            
-            if isDone == "Not Done":
+        if currentData[key] != 'Test1' and currentData[key] != 'Test2':
+            for isDone, answer in currentData[key].items():
                 
-                for j, k in answer.items():
-                    for i,m in k.items():
-                        questionOpt.append(i)
+                if isDone == "Not Done":
+                    
+                    for j, k in answer.items():
+                        for i,m in k.items():
+                            questionOpt.append(i)
 
-                return answer, key, questionOpt
-            else:
-                break
+                    return answer, key, questionOpt
+                else:
+                    break
 
-def resetJson(currentData, currentPath):
+def resetJson(currentData):
     for key, value in currentData.items():
-        for isDone, answer in currentData[key].items():
-            
-            if isDone == "Done":    
-                #Marks question as displayed
-                entry = {"Not Done" : answer}
-                currentData[key] = entry
+        if currentData[key] != 'Test1' and currentData[key] != 'Test2':
+            for isDone, answer in currentData[key].items():
                 
-    write_to(currentData, currentPath)
+                if isDone == "Done":    
+                    #Marks question as displayed
+                    entry = {"Not Done" : answer}
+                    currentData[key] = entry
+                
+    
     
 #function to check if answer is correct. returns correct answer
 def ret_answer(q):
@@ -81,44 +98,45 @@ def ret_answer(q):
             if correctNess == "correct":
                 return answerLetter
 
-def advance(currentData, currentPath):
+def advance(currentData):
     
     for key, value in currentData.items():
-        for isDone, answer in currentData[key].items():
-            if isDone == "Not Done":
-                
-                #Marks question as displayed
-                entry = {"Done" : answer}
-                currentData[key] = entry
-                write_to(currentData, currentPath)
-                return
+        if currentData[key] != 'Test1' and currentData[key] != 'Test2':
+            for isDone, answer in currentData[key].items():
+                if isDone == "Not Done":
+                    
+                    #Marks question as displayed
+                    entry = {"Done" : answer}
+                    currentData[key] = entry
+                    
+                    return
     
 #checks what curriculum and thus learning materials user willl use. This will return the json file to loop through
 def makeCurriculum(courseID):
     if courseID == 0:
         link1 = "https://www.guru99.com/blockchain-tutorial.html#5"
         correctJsonData = jsonData1
-        correctJsonPath = json_path1
-        imagePath = join(dirname(__file__), 'Blockchain.png')
-        return correctJsonData, correctJsonPath, link1, '', ''
+        
+        #imagePath = join(dirname(__file__), 'Blockchain.png')
+        return correctJsonData, link1, '', ''
     if courseID == 1:
         link1 = "https://ethereum.org/en/developers/tutorials/how-to-write-and-deploy-an-nft/", 
         link2 = "https://ethereum.org/en/developers/tutorials/how-to-mint-an-nft/", 
         link3 = "https://ethereum.org/en/developers/tutorials/how-to-view-nft-in-metamask/"
         correctJsonData = jsonData2
-        correctJsonPath = json_path2
-        imagePath = join(dirname(__file__), 'NFT.png')
-        return correctJsonData, correctJsonPath, link1, link2, link3
+        
+        #imagePath = join(dirname(__file__), 'NFT.png')
+        return correctJsonData, link1, link2, link3
     
-def create_IMG_Path(courseID):
-    if courseID == 0:
-        imagePath = join(dirname(__file__), 'Blockchain.png')
-    if courseID == 1:
-        imagePath = join(dirname(__file__), 'NFT.png')
-    return imagePath   
+# def create_IMG_Path(courseID):
+#     if courseID == 0:
+#         imagePath = join(dirname(__file__), 'Blockchain.png')
+#     if courseID == 1:
+#         imagePath = join(dirname(__file__), 'NFT.png')
+#     return imagePath   
 
 #image Path
-imagePath = create_IMG_Path(0)
+# imagePath = create_IMG_Path(0)
  
 @client.event   
 async def on_ready():
@@ -137,15 +155,15 @@ async def on_message(message):
     
     global correct_ans
     global currentData
-    global currentPath
+    
     msg = message.content
     send = message.channel.send
     
     
     
     if msg == "Begin!":
-        currentData, currentPath, link1, link2, link3 = makeCurriculum(0)
-        resetJson(currentData, currentPath)
+        currentData, link1, link2, link3 = makeCurriculum(1)
+        resetJson(currentData)
         correct_ans = ''
         counter += 1
         
@@ -168,7 +186,7 @@ async def on_message(message):
         
     if counter == 1: 
          
-        questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath)
+        questionData, actualQuestion, actualOptions = get_questionData(currentData)
         
         #ask question and ask to input answer
         
@@ -177,12 +195,12 @@ async def on_message(message):
         
         
         
-        #if counter == 1: advance(currentData, currentPath)
+        
         
         
     if counter == 2 or counter == 3 or counter == 4 or counter == 5 or counter == 6:   
         
-        questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath) 
+        questionData, actualQuestion, actualOptions = get_questionData(currentData) 
         correct_ans = ret_answer(questionData)
         
         print(f"Current correct is {correct_ans}")
@@ -199,17 +217,17 @@ async def on_message(message):
                 if msg[1] == str(correct_ans): numCorrect +=1
             if counter == 6:
                 if msg[1] == str(correct_ans): numCorrect +=1
-            advance(currentData, currentPath)
+            advance(currentData)
             if counter == 5:
                 
-                questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath)
+                questionData, actualQuestion, actualOptions = get_questionData(currentData)
                 correct_ans = ret_answer(questionData)
-                await send(file=discord.File(imagePath))
+                #await send(file=discord.File(imagePath))
                 await send(f"{counter}. {actualQuestion}")
                 await send(f"A : {actualOptions[0]}\nB : {actualOptions[1]}\nC : {actualOptions[2]}\nD : {actualOptions[3]}")
                 counter += 1
             elif counter != 6:
-                questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath)
+                questionData, actualQuestion, actualOptions = get_questionData(currentData)
                 correct_ans = ret_answer(questionData)
                 await send(f"{counter}. {actualQuestion}")
                 await send(f"A : {actualOptions[0]}\nB : {actualOptions[1]}\nC : {actualOptions[2]}\nD : {actualOptions[3]}")
@@ -236,8 +254,9 @@ async def on_message(message):
     
 
     if msg == ".Reset":
-        resetJson(currentData, currentPath)
+        resetJson(currentData)
         counter = 0
+        numCorrect = 0
         await send("Questions Reset! Please input 'Begin!' to get started")
 
 #Secret stuff

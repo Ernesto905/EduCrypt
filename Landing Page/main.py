@@ -19,20 +19,6 @@ def errorhandlerSelf(data):
         errors.append("Discord id is not valid")
     return errors
 
-def errorhandlerGroup(data):
-    errors = []
-    if(data["name"] == ""):
-        errors.append("Name cannot be empty")
-    if(len(data["discord"]) < 1):
-        errors.append("More than 1 Discord ids needed")
-    for dc in data["discord"]:
-        if(dc==""):
-            continue
-        if((data["discord"][-5:][0] != "#") or (data["discord"][-4:].isdigit())):
-            errors.append("One or more of the Discord ids is/are invalid")
-            break
-    return errors
-
 app = Flask(__name__)
 
 @app.route("/")
@@ -44,7 +30,7 @@ def home():
 def form():
     return render_template("./form.html", load="choice")
 
-@app.route("/register_self", methods=['POST'])
+@app.route("/register", methods=['POST'])
 def register_self():
     if request.method == 'POST':
         data = {
@@ -59,25 +45,7 @@ def register_self():
             uploadJson(data)
             return render_template('./form.html', load="success")
         else:
-            return render_template('./form.html', load="self", errors=errs)
-
-@app.route("/register_group", methods=['POST'])
-def register_group():
-    if request.method == 'POST':
-        data = {
-            "_id": "",
-            "discord": request.form["discord"].split(';'),
-            "name": request.form["name"],
-            "interval-course": request.form["interval-course"],
-            "interval-meet": request.form["interval-meet"],
-            "course": request.form["course"]
-        }
-        errs = errorhandlerGroup(data)
-        if(errs == []):
-            uploadJson(data)
-            return render_template('./form.html', load="success")
-        else:
-            return render_template('./form.html', load="group", errors=errs)
+            return render_template('./form.html', load="form", errors=errs)
 
 if __name__ == "__main__":
     app.run()

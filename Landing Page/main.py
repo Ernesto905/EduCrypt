@@ -1,10 +1,13 @@
 from flask import Flask, render_template, url_for, request
-import json
+from pymongo import MongoClient
+from json import dumps
+# Configure Database
+conn_str = "mongodb+srv://Atiksh:BAKOzinbCcHzXLh0@cluster0.h8feh.mongodb.net/EducryptDatabase?ssl=true&ssl_cert_reqs=CERT_NONE"
 
-app = Flask(__name__)
-
-def uploadJson(json):
-    print(json)
+def uploadJson(data):
+    DBclient = MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+    myDB = DBclient["EducryptDatabase"]["preferences"]
+    myDB.insert_one(data)
 
 def errorhandlerSelf(data):
     errors = []
@@ -30,6 +33,8 @@ def errorhandlerGroup(data):
             break
     return errors
 
+app = Flask(__name__)
+
 @app.route("/")
 @app.route("/home")
 def home():
@@ -43,15 +48,16 @@ def form():
 def register_self():
     if request.method == 'POST':
         data = {
-            "name": request.form["name"],
+            "_id": request.form["discord"],
             "discord": request.form["discord"],
+            "name": request.form["name"],
             "interval": request.form["interval"],
             "course": request.form["course"]
         }
         errs = errorhandlerSelf(data)
         if(errs == []):
-            uploadJson(json.dumps(data))
-            return "<script>window.onload = window.close();</script>"
+            uploadJson(data)
+            return render_template('./form.html', load="success")
         else:
             return render_template('./form.html', load="self", errors=errs)
 
@@ -59,16 +65,17 @@ def register_self():
 def register_group():
     if request.method == 'POST':
         data = {
-            "name": request.form["name"],
+            "_id": "",
             "discord": request.form["discord"].split(';'),
+            "name": request.form["name"],
             "interval-course": request.form["interval-course"],
             "interval-meet": request.form["interval-meet"],
             "course": request.form["course"]
         }
         errs = errorhandlerGroup(data)
         if(errs == []):
-            uploadJson(json.dumps(data))
-            return "<script>window.onload = window.close();</script>"
+            uploadJson(data)
+            return render_template('./form.html', load="success")
         else:
             return render_template('./form.html', load="group", errors=errs)
 

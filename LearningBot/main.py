@@ -5,20 +5,25 @@ from dotenv import load_dotenv
 from os.path import join, dirname
 import json
 import time
-
-
-
-
+import asyncio
 import pymongo
 
 #Database configuration
 conn_str = "mongodb+srv://Ernesto905:mypassword@cluster0.h8feh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-DBclient = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+DBclient = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=10000)
 myDB = DBclient["EducryptDatabase"]["learningBot"]
+myPrefDB = DBclient["EducryptDatabase"]["preferences"]
 
+global userInfo
+userInfo = {}
+
+
+
+# for category,entry in userInfo.items():
+#     if category == "discord":
+#         print(entry) 
 # fileData = myDB.find({"_id": "accounts"})[0]
 #collection = db.tradingBot
-
 
 
 client = discord.Client()
@@ -26,36 +31,47 @@ client = discord.Client()
 jsonData1 = myDB.find({"_id": "Test1"})[0]
 jsonData2 = myDB.find({"_id": "Test2"})[0]
 
-global interval
-global curriculumID
+global completed
 global counter
 global extra
 global numCorrect
 global correct_ans
 
-"""
-Intervals:
-daily = once every day
-12hrs = every 12 hrs
-weekly = once every week
-weekly2 = twice every week
-
-Course:
-NFT
-Blockchain
-"""
+completed = False
 
 counter = 0
 numCorrect = 0
 
+# async def hello():
+#     print('Hello ...')
+#     await asyncio.sleep(5)
+#     print('... World!')
+# async def main():
+#     asyncio.create_task(hello())
+#     await asyncio.sleep(1)
+#     print("it works!!!")
 
-def timeInterval(elapse):
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(main())
+
+
+# async def timeInterval(elapse):
     
-    if elapse == "day": gap = 86400
-    if elapse == "45" : gap = 2700
-    if elapse == "30" : gap = 1800
-    
-    time.sleep(2)
+#     if elapse == 'daily':
+def time_Interval(timeinterval):
+    if timeinterval == "seconds":
+        time.sleep(6)
+    if timeinterval == "daily":
+        time.sleep(86400)
+    if timeinterval == "12hrs":
+        time.sleep(43200)
+    if timeinterval == "weekly":
+        time.sleep(86400*7)
+    if timeinterval == "weekly2":
+        time.sleep(43200*7)
+    return
+
+#     if elapse == '12hrs':
 
 #function to write into json file
 
@@ -112,21 +128,31 @@ def advance(currentData):
                     return
     
 #checks what curriculum and thus learning materials user willl use. This will return the json file to loop through
-def makeCurriculum(courseID):
-    if courseID == 0:
+def makeCurriculum(user):
+    userInfo = myPrefDB.find({"_id" : str(user)})[0]
+    
+    discordID = userInfo["discord"]
+    name = userInfo["name"]
+    timeInterval = userInfo["interval"]
+    course = userInfo["course"]
+    if course == "Blockchain" and completed == True: course = "NFT"
+    if course == "NFT" and completed == True: course = "Blockchain"
+    
+    if course == "Blockchain":
         link1 = "https://www.guru99.com/blockchain-tutorial.html#5"
+        link2 = ''
+        link3 = ''
         correctJsonData = jsonData1
-        
         #imagePath = join(dirname(__file__), 'Blockchain.png')
-        return correctJsonData, link1, '', ''
-    if courseID == 1:
+        
+    if course == "NFT":
         link1 = "https://ethereum.org/en/developers/tutorials/how-to-write-and-deploy-an-nft/", 
         link2 = "https://ethereum.org/en/developers/tutorials/how-to-mint-an-nft/", 
         link3 = "https://ethereum.org/en/developers/tutorials/how-to-view-nft-in-metamask/"
         correctJsonData = jsonData2
         
-        #imagePath = join(dirname(__file__), 'NFT.png')
-        return correctJsonData, link1, link2, link3
+         
+    return correctJsonData, link1, link2, link3, timeInterval
     
 # def create_IMG_Path(courseID):
 #     if courseID == 0:
@@ -162,11 +188,10 @@ async def on_message(message):
     
     
     if msg == "Begin!":
-        currentData, link1, link2, link3 = makeCurriculum(1)
+        currentData, link1, link2, link3, timeInt = makeCurriculum(message.author)
         resetJson(currentData)
         correct_ans = ''
         counter += 1
-        
         
         await send(f"Welcome to EduCrypt! {message.author}, we have hand picked the following lectures and quizzes to meet your educational goals.\nPlease proceed to the following link(s)")
         if link3 != '':
@@ -176,7 +201,7 @@ async def on_message(message):
         await send(link1)
         await send("Estimated time of completion: 45 minutes")
         
-        timeInterval(1) #Placeholder time interval for now
+        time_Interval(timeInt) #Placeholder time interval for now
         
         await send("It has been 45 minutes")
         await send(f'Quiz Time!\n------------\nPlease type your answer in the following example format : ".A"')
@@ -239,6 +264,7 @@ async def on_message(message):
         
     if counter == 1 : counter +=1   #this is weird, just disregard me
     if counter == 7:
+        completed = True
         counter += 1
         await send(f"Your total score has been {numCorrect}/5")
         if numCorrect != 5:
@@ -247,10 +273,6 @@ async def on_message(message):
             await send("Congrats on scoring 100% ! Here's a bonus video to feed your hungry mind!")
             await send("https://www.youtube.com/watch?v=9oERTH9Bkw0&t=7668s")
          
-
-    #else:
-        #await send("Are you ready to begin? Type 'Begin!' whenever you feel ready to start your journey")
-        #await send (f"You have scored {numCorrect} out of 4")
     
 
     if msg == ".Reset":
@@ -258,6 +280,26 @@ async def on_message(message):
         counter = 0
         numCorrect = 0
         await send("Questions Reset! Please input 'Begin!' to get started")
+        
+    if completed == True:
+        currentData, link1, link2, link3, timeInt = makeCurriculum(message.author)
+        time_Interval(timeInt)
+        resetJson(currentData)
+        correct_ans = ''
+        counter += 1
+        
+        await send(f"Congratulations {message.author}, You are now ready for the next step in your learning journey.\nPlease proceed to the following link(s)")
+        if link3 != '':
+            await send(link3)
+        if link2 != '':
+            await send(link2)
+        await send(link1)
+        await send("Estimated time of completion: 45 minutes")
+        
+        time_Interval(timeInt) #Placeholder time interval for now
+        
+        await send("It has been 45 minutes")
+        await send(f'Quiz Time!\n------------\nPlease type your answer in the following example format : ".A"')
 
 #Secret stuff
 dotenv_path = join(dirname(__file__), '.env')

@@ -10,7 +10,7 @@ import pymongo
 
 #Database configuration
 conn_str = "mongodb+srv://Ernesto905:mypassword@cluster0.h8feh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-DBclient = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+DBclient = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=10000)
 db = DBclient.EducryptDatabase
 collection = db.tradingBot
 

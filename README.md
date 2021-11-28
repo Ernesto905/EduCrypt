@@ -16,6 +16,13 @@ The material is handpicked from all the free resources available on the internet
 ## How we built it:
 In a rush, with no experince learning, experimenting, and fixing bugs along the way.
 
+## Tech Stack
+- Mongo DB
+- HTML, CSS, JS
+- Flask
+- Discord.py
+- Python
+
 ## Challenges we ran into
 - Inexperinence in these technologies
 - Less time

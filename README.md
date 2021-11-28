@@ -38,3 +38,8 @@ In a rush, with no experince learning, experimenting, and fixing bugs along the 
 - Website enhancement
 - Deployment, on a scalable infratructure.
 - Expanding, this platform to stock trading.
+
+## What we learned
+- Mongo DB
+- Flask (Some experince was there)
+- Discord.py

@@ -28,7 +28,7 @@ def home():
 
 @app.route("/form")
 def form():
-    return render_template("./form.html", load="choice")
+    return render_template("./form.html", load="form")
 
 @app.route("/register", methods=['POST'])
 def register_self():

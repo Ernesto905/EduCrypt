@@ -51,16 +51,13 @@ def get_questionData(currentData, currentPath):
     questionOpt = []
     for key, value in currentData.items():
         for isDone, answer in currentData[key].items():
+            
             if isDone == "Not Done":
-                
-                
                 
                 for j, k in answer.items():
                     for i,m in k.items():
                         questionOpt.append(i)
-                
-                #print(f"The current answer value is: {answer}")
-                
+
                 return answer, key, questionOpt
             else:
                 break
@@ -68,13 +65,13 @@ def get_questionData(currentData, currentPath):
 def resetJson(currentData, currentPath):
     for key, value in currentData.items():
         for isDone, answer in currentData[key].items():
-            if isDone == "Done":
-                
+            
+            if isDone == "Done":    
                 #Marks question as displayed
                 entry = {"Not Done" : answer}
                 currentData[key] = entry
                 
-                write_to(currentData, currentPath)
+    write_to(currentData, currentPath)
     
 #function to check if answer is correct. returns correct answer
 def ret_answer(q):
@@ -98,10 +95,17 @@ def advance(currentData, currentPath):
 #checks what curriculum and thus learning materials user willl use. This will return the json file to loop through
 def makeCurriculum(courseID):
     if courseID == 0:
-        link = ("https://www.guru99.com/blockchain-tutorial.html#5")
+        link1 = "https://www.guru99.com/blockchain-tutorial.html#5"
         correctJsonData = jsonData1
         correctJsonPath = json_path1
-        return correctJsonData, correctJsonPath
+        return correctJsonData, correctJsonPath, link1, '', '', False
+    if courseID == 1:
+        link1 = "https://ethereum.org/en/developers/tutorials/how-to-write-and-deploy-an-nft/", 
+        link2 = "https://ethereum.org/en/developers/tutorials/how-to-mint-an-nft/", 
+        link3 = "https://ethereum.org/en/developers/tutorials/how-to-view-nft-in-metamask/"
+        correctJsonData = jsonData2
+        correctJsonPath = json_path2
+        return correctJsonData, correctJsonPath, link1, link2, link3, True
 
 @client.event   
 async def on_ready():
@@ -127,14 +131,18 @@ async def on_message(message):
     
     
     if msg == "Begin!":
-        currentData, currentPath = makeCurriculum(0)
-        
+        currentData, currentPath, link1, link2, link3, extra = makeCurriculum(1)
+        resetJson(currentData, currentPath)
         correct_ans = ''
         counter += 1
         
         
-        await send(f"Welcome to EduCrypt! {message.author}, we have hand picked the following lectures and quizzes to meet your educational goals.\nPlease proceed to the following link")
-        await send("https://www.guru99.com/blockchain-tutorial.html#5")
+        await send(f"Welcome to EduCrypt! {message.author}, we have hand picked the following lectures and quizzes to meet your educational goals.\nPlease proceed to the following link(s)")
+        if link3 != '':
+            await send(link3)
+        if link2 != '':
+            await send(link2)
+        await send(link1)
         await send("Estimated time of completion: 45 minutes")
         
         timeInterval(1) #Placeholder time interval for now
@@ -145,22 +153,22 @@ async def on_message(message):
     
     if counter == 0: await send("Please type 'Begin!' to recieve your first learning resource!")
         
-    if counter == 1 or counter == 2 or counter == 3 or counter == 4 : 
+    if counter == 1: 
          
         questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath)
-
+        
         #ask question and ask to input answer
+        
         await send(f"{counter}. {actualQuestion}")
         await send(f"A : {actualOptions[0]}\nB : {actualOptions[1]}\nC : {actualOptions[2]}\nD : {actualOptions[3]}")
         
         
         
-        
-        
+        #if counter == 1: advance(currentData, currentPath)
         
         
     if counter == 2 or counter == 3 or counter == 4 or counter == 5:   
-         #returns three things. First, key value question in question. Second, the actual question being asked in plaintext form. Third, the actual answers in the form of a list
+        
         questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath) 
         correct_ans = ret_answer(questionData)
         
@@ -169,22 +177,35 @@ async def on_message(message):
         
         if msg[1] == "A" or msg[1] =="B" or msg[1]=="C" or msg[1]=="D":  
             if counter == 2:
-                if msg[1] == str(correct_ans): 
-                    numCorrect +=1
-                     
+                if msg[1] == str(correct_ans): numCorrect +=1  
             if counter == 3:
                 if msg[1] == str(correct_ans): numCorrect +=1
             if counter == 4:
                 if msg[1] == str(correct_ans): numCorrect +=1
             if counter == 5:
                 if msg[1] == str(correct_ans): numCorrect +=1
-            advance(currentData, currentPath)   
-            counter += 1
+            advance(currentData, currentPath)
+            if counter != 5:
+                questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath)
+                correct_ans = ret_answer(questionData)
+                await send(f"{counter}. {actualQuestion}")
+                await send(f"A : {actualOptions[0]}\nB : {actualOptions[1]}\nC : {actualOptions[2]}\nD : {actualOptions[3]}")
+                counter += 1
+            
+            
+            else: counter += 1
 
         
     if counter == 1 : counter +=1   #this is weird, just disregard me
     if counter == 6:
-        await send(f"Your total score has been {numCorrect}/4")     
+        counter += 1
+        await send(f"Your total score has been {numCorrect}/4")
+        if numCorrect != 4:
+            await send(f'No worries! Crypto is a tricky beast. Feel free to input ".Reset" to reset your answer choices and try again! Remember, Practice makes perfect!')
+        if numCorrect == 4:
+            await send("Congrats on scoring 100% ! Here's a bonus video to feed your hungry mind!")
+            await send("https://www.youtube.com/watch?v=9oERTH9Bkw0&t=7668s")
+         
     
     #else:
         #await send("Are you ready to begin? Type 'Begin!' whenever you feel ready to start your journey")
@@ -193,6 +214,7 @@ async def on_message(message):
 
     if msg == ".Reset":
         resetJson(currentData, currentPath)
+        counter = 0
         await send("Questions Reset! Please input 'Begin!' to get started")
 
 #Secret stuff

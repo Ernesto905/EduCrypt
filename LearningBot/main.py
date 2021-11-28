@@ -24,6 +24,7 @@ jsonData2 = json.load(jsonFile2)
 jsonFile2.close()
 
 global counter
+global extra
 global numCorrect
 global correct_ans
 
@@ -98,15 +99,27 @@ def makeCurriculum(courseID):
         link1 = "https://www.guru99.com/blockchain-tutorial.html#5"
         correctJsonData = jsonData1
         correctJsonPath = json_path1
-        return correctJsonData, correctJsonPath, link1, '', '', False
+        imagePath = join(dirname(__file__), 'Blockchain.png')
+        return correctJsonData, correctJsonPath, link1, '', ''
     if courseID == 1:
         link1 = "https://ethereum.org/en/developers/tutorials/how-to-write-and-deploy-an-nft/", 
         link2 = "https://ethereum.org/en/developers/tutorials/how-to-mint-an-nft/", 
         link3 = "https://ethereum.org/en/developers/tutorials/how-to-view-nft-in-metamask/"
         correctJsonData = jsonData2
         correctJsonPath = json_path2
-        return correctJsonData, correctJsonPath, link1, link2, link3, True
+        imagePath = join(dirname(__file__), 'NFT.png')
+        return correctJsonData, correctJsonPath, link1, link2, link3
+    
+def create_IMG_Path(courseID):
+    if courseID == 0:
+        imagePath = join(dirname(__file__), 'Blockchain.png')
+    if courseID == 1:
+        imagePath = join(dirname(__file__), 'NFT.png')
+    return imagePath   
 
+#image Path
+imagePath = create_IMG_Path(0)
+ 
 @client.event   
 async def on_ready():
     print('A wild Learning Bot appeared! His name is: {0.user}'.format(client))
@@ -131,7 +144,7 @@ async def on_message(message):
     
     
     if msg == "Begin!":
-        currentData, currentPath, link1, link2, link3, extra = makeCurriculum(1)
+        currentData, currentPath, link1, link2, link3 = makeCurriculum(0)
         resetJson(currentData, currentPath)
         correct_ans = ''
         counter += 1
@@ -167,7 +180,7 @@ async def on_message(message):
         #if counter == 1: advance(currentData, currentPath)
         
         
-    if counter == 2 or counter == 3 or counter == 4 or counter == 5:   
+    if counter == 2 or counter == 3 or counter == 4 or counter == 5 or counter == 6:   
         
         questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath) 
         correct_ans = ret_answer(questionData)
@@ -184,8 +197,18 @@ async def on_message(message):
                 if msg[1] == str(correct_ans): numCorrect +=1
             if counter == 5:
                 if msg[1] == str(correct_ans): numCorrect +=1
+            if counter == 6:
+                if msg[1] == str(correct_ans): numCorrect +=1
             advance(currentData, currentPath)
-            if counter != 5:
+            if counter == 5:
+                
+                questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath)
+                correct_ans = ret_answer(questionData)
+                await send(file=discord.File(imagePath))
+                await send(f"{counter}. {actualQuestion}")
+                await send(f"A : {actualOptions[0]}\nB : {actualOptions[1]}\nC : {actualOptions[2]}\nD : {actualOptions[3]}")
+                counter += 1
+            elif counter != 6:
                 questionData, actualQuestion, actualOptions = get_questionData(currentData, currentPath)
                 correct_ans = ret_answer(questionData)
                 await send(f"{counter}. {actualQuestion}")
@@ -197,20 +220,20 @@ async def on_message(message):
 
         
     if counter == 1 : counter +=1   #this is weird, just disregard me
-    if counter == 6:
+    if counter == 7:
         counter += 1
-        await send(f"Your total score has been {numCorrect}/4")
-        if numCorrect != 4:
+        await send(f"Your total score has been {numCorrect}/5")
+        if numCorrect != 5:
             await send(f'No worries! Crypto is a tricky beast. Feel free to input ".Reset" to reset your answer choices and try again! Remember, Practice makes perfect!')
-        if numCorrect == 4:
+        if numCorrect == 5:
             await send("Congrats on scoring 100% ! Here's a bonus video to feed your hungry mind!")
             await send("https://www.youtube.com/watch?v=9oERTH9Bkw0&t=7668s")
          
-    
+
     #else:
         #await send("Are you ready to begin? Type 'Begin!' whenever you feel ready to start your journey")
         #await send (f"You have scored {numCorrect} out of 4")
-   
+    
 
     if msg == ".Reset":
         resetJson(currentData, currentPath)

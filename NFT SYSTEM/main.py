@@ -6,6 +6,8 @@ from os.path import join, dirname
 import json
 import time
 from pycoingecko import CoinGeckoAPI
+import traceback
+import sys
 cg = CoinGeckoAPI()
 def retAllCrypto():
     data = cg.get_coins_list()
@@ -22,7 +24,7 @@ def verifyCrypto(crypto):
         return False
 
 dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+load_dotenv()
 
 discordToken = os.environ.get('discordToken')
 
@@ -70,67 +72,46 @@ async def sell(ctx, *, args):
 @client.command()
 async def buy(ctx):
     channel = ctx.message.channel
-    # try:
-    with open(f"NFT SYSTEM/data/{channel}-data.json", 'r') as data_json:
-            data = json.load(data_json)
-            data_json.close()
-        
-    seller = data["user"]
-    title = data["nft-title"]
-    file_url = data["file-url"]
-    price = data["price"]
-    ticker = data["ticker"]
-    buyer = ctx.author
-
-    role = discord.utils.find(lambda r: r.name == 'miner', ctx.message.guild.roles)
-    ID = ctx.message.guild.id
-    guild = client.get_guild(ID)
-    memberList = list(guild.members)
-    for member in memberList:
-                if role in member.roles:
-                    user = client.get_user(member.id)
-                    await user.send('Processing Transaction')
-                    time.sleep(2)
-                    await user.send('Transaction Processed Succesfully')
-                    # print(member.name+"#"+member.discriminator)
-                # mydict = []
-                # with open ("../../../TRADING SYSTEM/accounts.json", "r") as account_data:
-                #     print(account_data.read())
-                #     for jsonObj in account_data:
-                #         obj = json.loads(jsonObj)
-                #         print(jsonObj)
-                #         mydict.append(obj)
-                    
-                #     print("mydict",mydict)
+    try:
+            with open(f"NFT SYSTEM/data/{channel}-data.json", 'r') as data_json:
+                    data = json.load(data_json)
+                    data_json.close()
                 
-                # for diction in mydict:
-                #     for key, value in diction.items():
-                #         for i in value:
-                #             for d in i:
-                #                     print(f"key: {key}, value: {d}")
-                #             if i == "cryptoHeld":
-                #                 for d in i:
-                #                     print(f"key: {key}, value: {d}")
+            seller = data["user"]
+            title = data["nft-title"]
+            file_url = data["file-url"]
+            price = data["price"]
+            ticker = data["ticker"]
+            buyer = ctx.author
 
-                #json_path = join(dirname(), 'accounts.json')
-                #jsonFile = open(json_path)
-                #jsonData = json.load(jsonFile)
-                #jsonFile.close()
+            role = discord.utils.find(lambda r: r.name == 'miner', ctx.message.guild.roles)
+            ID = ctx.message.guild.id
+            guild = client.get_guild(ID)
+            memberList = list(guild.members)
+            for member in memberList:
+                        if role in member.roles:
+                            user = client.get_user(member.id)
+                            await user.send('Processing Transaction')
+                            time.sleep(2)
+                            await user.send('Transaction Processed Succesfully')
+                            # print(member.name+"#"+member.discriminator)
+ 
+                        # json_path = os.path.join(os.path.dirname(__file__), 'test.json')
+                        # with open(json_path, 'r') as f:
+                        #     data = json.load(f)
+                        #     dictionary = data[member.name+"#"+member.discriminator]["cryptoHeld"][ticker]
+                        #     for key in dictionary:
+                        #         print (f"key: {key}, value: {dictionary[key]}")
+                        #         new__balance = float(key) + 1/price * 100
+                        #         key = str(new__balance)
+                        #Update DB Here, give 1% of transaction to miners and deduct the buyers balance + increase the seller's balance. Also have a record for the nft.
+            channel = client.get_channel(914508940186894397)
+            await channel.send(f"{buyer} now owns {title}")
+            await channel.send(f"{buyer} gave {price}{ticker} to {seller}")
 
-               
-                # with open ("../../../TRADING SYSTEM/accounts.json", "r") as account_data:
-                #     mydict = json.load(account_data)
-                #     for key, value in mydict.items():
-                #             for k, v in value.items():
-                #                 if k == "cryptoHeld":
-                #                     d = v["dogecoin"]
-                #                     print(f"{d}")
-                with open("../../../TRADING SYSTEM/accounts.json", "r") as account_data:
-                    obj = json.loads(account_data.read())
-                    print(obj)
-                
-    # except Exception as e: 
-    #     print(e)
-    #     await ctx.send("No, Such NFT exists, or you are messaging, in the wrong channel, please message in a channel under the 'NFT-TRADING' category.")
+    except Exception: 
+        exc_info = sys.exc_info()
+        traceback.print_exception(*exc_info)
+        await ctx.send("No, Such NFT exists, or you are messaging, in the wrong channel, please message in a channel under the 'NFT-TRADING' category, if the problem persists tag server admins.")
 
-client.run("OTEyOTU2NTg2MjI4NTg4NTY1.YZ3fFA.SpZ8JyDY1LrXPts_U6dOX2yolac")
+client.run(discordToken)

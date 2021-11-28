@@ -26,7 +26,7 @@
         <button type="button" class="btn btn-info fs-4 my-2" onclick="choiceA()">Register Yourself</button>
         <button type="button" class="btn btn-info fs-4 my-2" onclick="choiceB()">Register Group</button>
     </section>
-    <section id="formA"{% if(load == "self") %}{% else %} hidden{% endif %}>
+    <section id="form"{% if(load == "form") %}{% else %} hidden{% endif %}>
         {% if(errors and (load=="self")) %}
             <div class="alert alert-danger" role="alert" style="position:absolute;overflow-y:scroll;max-height:15vh;width:90vw;top:1vh;z-index:1;">
                 {% for err in errors %}
@@ -37,16 +37,16 @@
         <h2 class="text-wrap fs-5" style="width:75%;max-width: 800px">Enter your Name, Discord id, and interval of time for recieving material</h2>
         <form class="my-4" action="/register_self" method="post">
             <div class="input-group my-2">
-                <label for="NameA">Name:&nbsp;</label>
-                <input type="text" name="name" id="NameA">
+                <label for="Name">Name:&nbsp;</label>
+                <input type="text" name="name" id="Name">
             </div>
             <div class="input-group my-2">
-                <label for="DiscordA">Discord id:&nbsp;</label>
-                <input type="text" name="discord" id="DiscordA" placeholder="example-id#0000">
+                <label for="Discord">Discord id:&nbsp;</label>
+                <input type="text" name="discord" id="Discord" placeholder="example-id#0000">
             </div>
             <div class="input-group my-2">
-                <label for="IntervalA">Interval:&nbsp;</label>
-                <select name="interval" id="IntervalA">
+                <label for="Interval">Interval:&nbsp;</label>
+                <select name="interval" id="Interval">
                     <option selected value="daily">Every Day</option>
                     <option value="12hrs">Every 12hrs</option>
                     <option value="weekly">Every week</option>
@@ -54,58 +54,8 @@
                 </select>
             </div>
             <div class="input-group my-2">
-                <label for="IntervalA">Course:&nbsp;</label>
-                <select name="course" id="IntervalA">
-                    <option selected value="Blockchain">Intro to Blockchain</option>
-                    <option value="NFT">Make your own NFT</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-outline-primary">Submit</button>
-        </form>
-        <button class="btn btn-outline-secondary" onClick="back()">Back</button>
-    </section>
-    <section id="formB"{% if(load == "group") %}{% else %} hidden{% endif %}>
-        {% if(errors and (load=="group")) %}
-            <div class="alert alert-danger" role="alert" style="position:absolute;overflow-y:scroll;max-height:15vh;width:90vw;top:1vh;z-index:1;">
-                {% for err in errors %}
-                {{err}}<br>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <h2 class="text-wrap fs-5" style="width: 85%;max-width: 800px">Enter your Name, Discord ids, and interval of time for recieving material and group meetings</h2>
-        <form class="my-4" action="/register_group" method="post">
-            <div class="input-group my-2">
-                <label for="NameB" class="form-label">Name:&nbsp;</label>
-                <input type="text" name="name" id="NameB" class="form-control">
-            </div>
-            <div class="input-group my-2" style="flex-direction: column;">
-                <label for="DiscordB" class="form-label">Discord ids:&nbsp;</label>
-                <input type="text" name="discord" id="DiscordB" aria-describedby="HelpBlock">
-                <div id="HelpBlock" class="form-text">
-                    Discord ids should be sepreated by ';'{example-id#0000;example-id#0001} with NO SPACES
-                </div>
-            </div>
-            <div class="input-group my-2">
-                <label for="Interval-course">Course Interval:&nbsp;</label>
-                <select name="interval-course" id="Interval-course">
-                    <option selected value="daily">Every Day</option>
-                    <option value="12hrs">Every 12hrs</option>
-                    <option value="weekly">Every week</option>
-                    <option value="weekly2">Twice a Week</option>
-                </select>
-            </div>
-            <div class="input-group my-2">
-                <label for="Interval-meet">Meeting Interval:&nbsp;</label>
-                <select name="interval-meet" id="Interval-meet">
-                    <option selected value="daily">Every Day</option>
-                    <option value="12hrs">Every 12hrs</option>
-                    <option value="weekly">Every week</option>
-                    <option value="weekly2">Twice a Week</option>
-                </select>
-            </div>
-            <div class="input-group my-2">
-                <label for="IntervalA">Course:&nbsp;</label>
-                <select name="course" id="IntervalA">
+                <label for="Course">Course:&nbsp;</label>
+                <select name="course" id="Course">
                     <option selected value="Blockchain">Intro to Blockchain</option>
                     <option value="NFT">Make your own NFT</option>
                 </select>

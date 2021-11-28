@@ -26,3 +26,4 @@ In a rush, with no experince learning, experimenting, and fixing bugs along the 
 - Learn with group feature
 - Website enhancement
 - Deployment, on a scalable infratructure.
+- Expanding, this platform to stock trading.

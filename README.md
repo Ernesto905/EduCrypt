@@ -16,6 +16,10 @@ The material is handpicked from all the free resources available on the internet
 ## How we built it:
 In a rush, with no experince learning, experimenting, and fixing bugs along the way.
 
+## Challenges we ran into
+- Inexperinence in these technologies
+- Less time
+
 ## Accomplishments
 - Learning Discord.py, and making such good bot in such less time
 - completing this huge project in less time.

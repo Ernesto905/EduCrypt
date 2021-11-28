@@ -41,5 +41,5 @@ In a rush, with no experince learning, experimenting, and fixing bugs along the 
 
 ## What we learned
 - Mongo DB
-- Flask (Some experince was there)
+- Flask (Some experience was there)
 - Discord.py

@@ -43,3 +43,8 @@ In a rush, with no experince learning, experimenting, and fixing bugs along the 
 - Mongo DB
 - Flask (Some experience was there)
 - Discord.py
+
+## Contributors
+- Ernesto (Trading Bot, Learning Bot, Mongo DB)
+- Vaarun Sinha (NFT Bot, QnA Bot, Planning)
+- Atik (Flask Website, Mongo DB)
